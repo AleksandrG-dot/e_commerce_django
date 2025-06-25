@@ -9,7 +9,7 @@ from django.db import models
 # Category: наименование, описание.
 
 
-class Category:
+class Category(models.Model):
     name = models.CharField(
         max_length=150,
         verbose_name="Категория товара",
