@@ -1,0 +1,26 @@
+[
+{
+    "model": "catalog.category",
+    "pk": 1,
+    "fields": {
+        "name": "Ноутбуки",
+        "description": "Компактные носимые устройства цифрового мира"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 2,
+    "fields": {
+        "name": "Обувь",
+        "description": "Элемент одежды на нижние конечности"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 3,
+    "fields": {
+        "name": "Вина",
+        "description": null
+    }
+}
+]
