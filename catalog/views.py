@@ -24,5 +24,5 @@ def product_detail(request, pk):
         product = Product.objects.get(id=pk)
     except:
         return HttpResponse(f"Товар с номером ID {pk} не найден!")
-    context = {'product_id': pk,'product': product}
+    context = {'product_id': pk, 'product': product}
     return render(request, 'catalog/product_detail.html', context)
