@@ -5,7 +5,9 @@ from catalog.models import Product
 
 
 def home(request):
-    return render(request, 'catalog/home.html')
+    products = Product.objects.all()
+    context = {'products': products}
+    return render(request, 'catalog/home.html', context)
 
 
 def contacts(request):
@@ -17,10 +19,10 @@ def contacts(request):
     return render(request, 'catalog/contacts.html')
 
 
-def product_detail(request, product_id):
+def product_detail(request, pk):
     try:
-        product = Product.objects.get(id=product_id)
+        product = Product.objects.get(id=pk)
     except:
-        return HttpResponse(f"Товар с номером ID {product_id} не найден!")
-    context = {'product_id': product_id,'product': product}
+        return HttpResponse(f"Товар с номером ID {pk} не найден!")
+    context = {'product_id': pk,'product': product}
     return render(request, 'catalog/product_detail.html', context)
