@@ -1,0 +1,32 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}Детали товара {{ product_id }}{% endblock %}
+
+{% block content %}
+
+<h2 class="md-5">Детали товара  (id#{{ product_id }})</h2>
+<p></p>
+<p></p>
+<h4>Категория: {{ product.category }}</h4>
+<h3>Товар: {{ product.name }}</h3>
+<h5><figure class="text-end">Цена: {{ product.price }}</figure></h5>
+<div class="row">
+    <div class="col-4">
+        <figure class="figure">
+            {% if product.photo %}
+                <img src="{{ product.photo.url }}" class="figure-img img-fluid rounded" alt="Фото не найдено">
+            {% else %}
+                Фото не найдено
+            {% endif %}
+        <figcaption class="figure-caption text-end">{{ product.name }}</figcaption>
+        </figure>
+    </div>
+    <div class="col-8">
+        <h4>Описание</h4>
+        <p>{{ product.description }}</p>
+        <p><small><em>Создано: {{ product.created_at|date:"d M Y" }}</em></small></p>
+        <p><small><em>Изменено: {{ product.updated_at|date:"d M Y" }}</em></small></p>
+    </div>
+</div>
+
+{% endblock %}
