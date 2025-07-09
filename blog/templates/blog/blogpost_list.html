@@ -1,0 +1,26 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+
+{% for blog in object_list %}
+<div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+    <div class="col-auto d-none d-lg-block">
+        {% if blog.preview %}
+        <img src="{{ blog.preview.url }}" width="120" alt="Превью не найдено">
+        {% else %}
+        Превью не найдено
+        {% endif %}
+    </div>
+    <div class="col p-1 ms-4 d-flex flex-column position-static">
+        <h4 class="mb-0">{{ blog.title }}</h4>
+        <div class="mb-1 text-body-secondary"><em>{{ blog.created_at|date:"d M Y" }}</em></div>
+        <div class="btn-group mt-1">
+            <a href="{% url 'blog:blog_detail' blog.pk %}" class="icon-link icon-link-hover me-3">Подробнее</a>
+            <a href="{% url 'blog:blog_update' blog.pk %}" class="icon-link icon-link-hover me-3">Изменить</a>
+            <a href="{% url 'blog:blog_delete' blog.pk %}" class="icon-link icon-link-hover me-3">Удалить</a>
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+{% endblock %}

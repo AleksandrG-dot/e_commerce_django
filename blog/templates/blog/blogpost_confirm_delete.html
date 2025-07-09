@@ -1,0 +1,15 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="text-center">
+            <h3 class="card-text">Вы действительно хотите удалить блог "{{ object.title }}"</h3>
+            <button class="btn btn-danger">Удалить</button>
+            <a class="btn btn-success" href="{% url 'blog:blog_list' %}" rule="button">Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
