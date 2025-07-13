@@ -16,13 +16,15 @@ FORBIDDEN_WORDS = [
     "радар",
 ]
 
+
 class StyleFormMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            field.widget.attrs['class'] = 'form-control'
+            field.widget.attrs["class"] = "form-control"
             if field.help_text:
-                field.widget.attrs['placeholder'] = field.help_text
+                field.widget.attrs["placeholder"] = field.help_text
+
 
 class ProductForm(StyleFormMixin, forms.ModelForm):
     class Meta:
@@ -30,11 +32,21 @@ class ProductForm(StyleFormMixin, forms.ModelForm):
         fields = ("category", "name", "price", "description", "photo")
 
     def clean_price(self):
-        price = self.cleaned_data.get('price')
+        price = self.cleaned_data.get("price")
         if price <= 0:
-            raise ValidationError('Цена не может быть отрицательной')
+            raise ValidationError("Цена не может быть отрицательной")
         return price
 
+    def clean_photo(self):
+        photo = self.cleaned_data.get("photo")
+        if photo:
+            if photo.content_type not in ("image/jpeg", "image/png"):
+                raise ValidationError("Формат файла должен быть JPEG или PNG")
+            if photo.size > 5242880:
+                raise ValidationError(
+                    "Размер файла для загрузки не должен превышать 5 МБ"
+                )
+        return photo
 
     def clean(self):
         cleaned_data = super().clean()
