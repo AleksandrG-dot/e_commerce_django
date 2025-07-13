@@ -1,0 +1,24 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}blog.title{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-4">
+        <figure class="figure">
+            {% if blog.preview %}
+                <img src="{{ blog.preview.url }}" class="figure-img img-fluid rounded" alt="Превью не найдено">
+            {% else %}
+                Превью не найдено
+            {% endif %}
+        </figure>
+    </div>
+    <div class="col-8">
+        <h2>{{ blog.title }}</h2>
+        <p><small><em>{{ blog.created_at|date:"d M Y" }}  Просмотров: {{ blog.views_counter }} / Блог id#{{ blog.id }}</em></small></p>
+        <p>{{ blog.content|safe }}</p>
+    </div>
+</div>
+
+{% endblock %}

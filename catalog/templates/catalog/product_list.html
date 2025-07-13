@@ -1,10 +1,10 @@
 {% extends 'catalog/base.html' %}
 
-{% block title %}Каталог товаров {{ product_id }}{% endblock %}
+{% block title %}Каталог товаров{% endblock %}
 
 {% block content %}
 
-{% for product in products %}
+{% for product in object_list %}
       <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
         <div class="col p-4 d-flex flex-column position-static">
           <h3 class="mb-0">{{ product.name }}</h3>

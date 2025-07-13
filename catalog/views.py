@@ -1,28 +1,37 @@
+from django import forms
 from django.http import HttpResponse
-from django.shortcuts import render
-
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, FormView
 from catalog.models import Product
 
 
-def home(request):
-    products = Product.objects.all()
-    context = {'products': products}
-    return render(request, 'catalog/home.html', context)
+class ProductListView(ListView):
+    model = Product
 
 
-def contacts(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        phone = request.POST.get('phone')
-        message = request.POST.get('message')
+class ProductDetailView(DetailView):
+    model = Product
+    context_object_name = "product"
+
+
+class ContactForm(forms.Form):
+    pass
+    # name = forms.CharField(max_length=150)
+    # phone_number = forms.CharField(max_length=15)
+    # message = forms.CharField(widget=forms.Textarea)
+
+
+class ContactsView(FormView):
+    template_name = "catalog/contacts.html"
+    form_class = ContactForm
+    success_url = reverse_lazy("catalog:contacts")
+
+    def post(self, request, *args, **kwargs):
+        name = request.POST.get("name")
+        phone = request.POST.get("phone")
+        message = request.POST.get("message")
         return HttpResponse(f"Спасибо, {name}! Ваше сообщение получено.")
-    return render(request, 'catalog/contacts.html')
 
-
-def product_detail(request, pk):
-    try:
-        product = Product.objects.get(id=pk)
-    except:
-        return HttpResponse(f"Товар с номером ID {pk} не найден!")
-    context = {'product_id': pk, 'product': product}
-    return render(request, 'catalog/product_detail.html', context)
+    # def form_valid(self, form):
+    #     name = form.cleaned_data['name']
+    #     return HttpResponse(f"Спасибо, {name}! Ваше сообщение получено.") #super().form_valid(form)

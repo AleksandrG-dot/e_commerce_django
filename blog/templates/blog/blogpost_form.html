@@ -1,0 +1,19 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+
+<h2 class="md-5">Создание блога</h2>
+<div class="container mt-5">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">
+      {% if object %}
+      Сохранить изменения
+      {% else %}
+      Создать
+      {% endif %}
+    </button>
+  </form>
+</div>
+{% endblock %}
