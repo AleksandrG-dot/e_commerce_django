@@ -1,7 +1,15 @@
-from django import forms
 from django.http import HttpResponse
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, FormView
+from django.views.generic import (
+    ListView,
+    DetailView,
+    FormView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
+
+from catalog.forms import ContactForm, ProductForm
 from catalog.models import Product
 
 
@@ -14,11 +22,23 @@ class ProductDetailView(DetailView):
     context_object_name = "product"
 
 
-class ContactForm(forms.Form):
-    pass
-    # name = forms.CharField(max_length=150)
-    # phone_number = forms.CharField(max_length=15)
-    # message = forms.CharField(widget=forms.Textarea)
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductForm
+    success_url = reverse_lazy("catalog:home")
+
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+
+    def get_success_url(self):
+        return reverse_lazy("catalog:product_detail", kwargs={"pk": self.object.pk})
+
+
+class ProductDeleteView(DeleteView):
+    model = Product
+    success_url = reverse_lazy("catalog:home")
 
 
 class ContactsView(FormView):
