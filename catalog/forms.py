@@ -48,16 +48,21 @@ class ProductForm(StyleFormMixin, forms.ModelForm):
                 )
         return photo
 
-    def clean(self):
-        cleaned_data = super().clean()
-        content = (
-            cleaned_data.get("name").lower()
-            + " "
-            + cleaned_data.get("description").lower()
-        )
+    def clean_name(self):
+        name = self.cleaned_data.get("name").lower()
         pf_custom = ProfanityFilter(custom_censor_list=FORBIDDEN_WORDS)
-        if not pf_custom.is_clean(content):
-            raise ValidationError("В описании присутствуют запрещенные слова")
+        if not pf_custom.is_clean(name):
+            raise ValidationError(
+                "В наименование товара присутствуют запрещенные слова"
+            )
+        return name
+
+    def clean_description(self):
+        description = self.cleaned_data.get("description").lower()
+        pf_custom = ProfanityFilter(custom_censor_list=FORBIDDEN_WORDS)
+        if not pf_custom.is_clean(description):
+            raise ValidationError("В описании товара присутствуют запрещенные слова")
+        return description
 
 
 class ContactForm(forms.Form):
