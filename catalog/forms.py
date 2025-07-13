@@ -22,6 +22,13 @@ class ProductForm(forms.ModelForm):
         model = Product
         fields = ("category", "name", "price", "description", "photo")
 
+    def clean_price(self):
+        price = self.cleaned_data.get('price')
+        if price <= 0:
+            raise ValidationError('Цена не может быть отрицательной')
+        return price
+
+
     def clean(self):
         cleaned_data = super().clean()
         content = (
