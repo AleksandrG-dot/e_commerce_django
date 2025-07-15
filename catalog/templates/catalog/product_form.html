@@ -1,0 +1,21 @@
+{% extends 'catalog/base.html' %}
+
+{% block content %}
+
+<h2 class="md-5">Добавление продукта</h2>
+<div class="container mt-5">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    {{ form.non_field_errors }}
+    <button type="submit" class="btn btn-primary">
+      {% if object %}
+      Сохранить изменения
+      {% else %}
+      Добавить
+      {% endif %}
+    </button>
+    <a href="{% url 'catalog:home' %}" class="btn btn-secondary">Отмена</a>
+  </form>
+</div>
+{% endblock %}
