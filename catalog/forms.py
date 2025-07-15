@@ -3,18 +3,7 @@ from django.forms import ValidationError
 from profanityfilter import ProfanityFilter
 
 from catalog.models import Product
-
-FORBIDDEN_WORDS = [
-    "казино",
-    "криптовалюта",
-    "крипта",
-    "биржа",
-    "дешево",
-    "бесплатно",
-    "обман",
-    "полиция",
-    "радар",
-]
+from config.settings import FORBIDDEN_WORDS
 
 
 class StyleFormMixin:
