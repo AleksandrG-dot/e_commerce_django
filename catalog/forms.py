@@ -11,8 +11,8 @@ class StyleFormMixin:
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs["class"] = "form-control"
-            if field.help_text:
-                field.widget.attrs["placeholder"] = field.help_text
+            # if field.help_text:
+            #     field.widget.attrs["placeholder"] = field.help_text
 
 
 class ProductForm(StyleFormMixin, forms.ModelForm):
