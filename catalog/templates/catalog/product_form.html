@@ -2,7 +2,12 @@
 
 {% block content %}
 
+{% if object %}
+<h2 class="md-5">Редактирование продукта</h2>
+{% else %}
 <h2 class="md-5">Добавление продукта</h2>
+{% endif %}
+
 <div class="container mt-5">
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
