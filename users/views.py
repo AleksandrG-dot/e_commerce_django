@@ -1,9 +1,10 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView
 
 from config.settings import EMAIL_HOST_USER
-from users.forms import UserCreateForm
+from users.forms import UserCreateForm, UserUpdateForm
 from users.models import UserModel
 
 
@@ -27,3 +28,12 @@ class UserCreateView(CreateView):
         from_email = EMAIL_HOST_USER
         recipient_list = [user_email]
         send_mail(subject, message, from_email, recipient_list)
+
+
+class UserUpdateView(LoginRequiredMixin, UpdateView):
+    model = UserModel
+    template_name = "update.html"
+    form_class = UserUpdateForm
+
+    def get_success_url(self):
+        return reverse_lazy("users:update", kwargs={"pk": self.object.pk})

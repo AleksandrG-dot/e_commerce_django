@@ -13,7 +13,7 @@
     <nav class="ms-auto">
         {% if user.is_authenticated %}
         <form method="post" action="{% url 'users:logout' %}">
-            Привет, <a href="#" class="link-dark me-3">{{ user.email }}</a>
+            Привет, <a href="{% url 'users:update' user.pk %}" class="link-dark me-3">{{ user.email }}</a>
             {% csrf_token %}
             <button type="submit" class="p-2 btn btn-outline-primary">Выйти</button>
         </form>
