@@ -11,7 +11,9 @@
 <h3>{{ product.name }}</h3>
 <p>
     <a href="{% url 'catalog:product_update' product.pk %}" class="icon-link icon-link-hover me-3">Изменить</a>
-    <a href="{% url 'catalog:product_delete' product.pk %}" class="icon-link icon-link-hover me-3">Удалить</a>
+    {% if perms.catalog.delete_product %}
+      <a href="{% url 'catalog:product_delete' product.pk %}" class="icon-link icon-link-hover me-3">Удалить</a>
+    {% endif %}
     <h5><figure class="text-end">Цена: {{ product.price }}</figure></h5>
 </p>
 <div class="row">

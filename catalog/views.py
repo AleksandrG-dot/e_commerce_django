@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import (
@@ -10,12 +10,19 @@ from django.views.generic import (
     DeleteView,
 )
 
-from catalog.forms import ContactForm, ProductForm
+from catalog.forms import ContactForm, ProductForm, ProductModeratorForm
 from catalog.models import Product
 
 
 class ProductListView(ListView):
     model = Product
+
+    def get_queryset(self):
+        """Если нет прав на изменение is_published, то не отображаем только разрешенные для публикации страницы"""
+        if self.request.user.has_perm('catalog.can_unpublish_product'):
+            return super().get_queryset()
+        else:
+            return Product.objects.filter(is_published=True)
 
 
 class ProductDetailView(LoginRequiredMixin, DetailView):
@@ -36,10 +43,21 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy("catalog:product_detail", kwargs={"pk": self.object.pk})
 
+    # По этому коду модератор сможет написать свою статью,
+    # но не сможет её отредактировать, а только включить или отключить отображение
+    def get_form_class(self):
+        """ Если у пользователя есть право публиковать продукты, то выводится форма ProductModeratorForm"""
+        user = self.request.user
+        if user.has_perm("catalog.can_unpublish_product"):
+            return ProductModeratorForm
+        else:
+            return super().get_form_class()
 
-class ProductDeleteView(LoginRequiredMixin, DeleteView):
+
+class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy("catalog:home")
+    permission_required = 'catalog.delete_product'
 
 
 class ContactsView(FormView):

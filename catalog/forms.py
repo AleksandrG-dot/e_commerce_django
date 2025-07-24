@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import ValidationError
+from django.forms import ValidationError, BooleanField
 from profanityfilter import ProfanityFilter
 
 from catalog.models import Product
@@ -10,9 +10,18 @@ class StyleFormMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            field.widget.attrs["class"] = "form-control"
+            if isinstance(field, BooleanField):
+                field.widget.attrs['class']="form-check-input"
+            else:
+                field.widget.attrs["class"] = "form-control"
             # if field.help_text:
             #     field.widget.attrs["placeholder"] = field.help_text
+
+
+class ProductModeratorForm(StyleFormMixin, forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ("is_published", )
 
 
 class ProductForm(StyleFormMixin, forms.ModelForm):
@@ -28,7 +37,7 @@ class ProductForm(StyleFormMixin, forms.ModelForm):
 
     def clean_photo(self):
         photo = self.cleaned_data.get("photo")
-        if photo:
+        if photo and not photo.closed:
             if photo.content_type not in ("image/jpeg", "image/png"):
                 raise ValidationError("Формат файла должен быть JPEG или PNG")
             if photo.size > 5242880:
@@ -47,7 +56,7 @@ class ProductForm(StyleFormMixin, forms.ModelForm):
         return name
 
     def clean_description(self):
-        description = self.cleaned_data.get("description").lower()
+        description = self.cleaned_data.get("description")
         pf_custom = ProfanityFilter(custom_censor_list=FORBIDDEN_WORDS)
         if not pf_custom.is_clean(description):
             raise ValidationError("В описании товара присутствуют запрещенные слова")

@@ -16,13 +16,13 @@ class Category(models.Model):
         help_text="Введите наименование категории товара",
         unique=True,
         null=False,
-        blank=False
+        blank=False,
     )
     description = models.TextField(
         verbose_name="Описание категории",
         help_text="Введите описание категории",
         blank=True,
-        null=True
+        null=True,
     )
 
     def __str__(self):
@@ -40,7 +40,7 @@ class Product(models.Model):
         verbose_name="Наименование",
         help_text="Введите наименование продукта",
         null=False,
-        blank=False
+        blank=False,
     )
     description = models.TextField(
         verbose_name="Описание товара",
@@ -75,6 +75,9 @@ class Product(models.Model):
         auto_now=True,
         help_text="Дата последнего изменения",
     )
+    is_published = models.BooleanField(
+        default=False, verbose_name="Признак публикации", help_text="Опубликовано?"
+    )
 
     def __str__(self):
         return f"{self.name} {self.category} {self.price}"
@@ -83,3 +86,6 @@ class Product(models.Model):
         verbose_name = "Товар"
         verbose_name_plural = "Товары"
         ordering = ["name", "price"]
+        permissions = [
+            ("can_unpublish_product", "Можно ли отменить публикацию продукта"),
+        ]

@@ -7,7 +7,15 @@
 {% for product in object_list %}
       <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
         <div class="col p-4 d-flex flex-column position-static">
-          <h3 class="mb-0">{{ product.name }}</h3>
+          <h3 class="mb-0">{{ product.name }}
+              {% if perms.catalog.can_unpublish_product %}
+                {% if product.is_published %}
+                  <p class="text-success">Опубликовано</p>
+                {% else %}
+                  <p class="text-danger">Не опубликовано</p>
+                {% endif %}
+              {% endif %}
+          </h3>
           <div class="mb-1 text-body-secondary">{{ product.price }}</div>
           <p class="card-text mb-auto">{{ product.description|truncatechars:100 }}</p>
           <a href="{% url 'catalog:product_detail' product.pk %}" class="icon-link gap-1 icon-link-hover stretched-link">
