@@ -8,12 +8,20 @@
       <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
         <div class="col p-4 d-flex flex-column position-static">
           <h3 class="mb-0">{{ product.name }}
+              {% if product.owner == user %}
+              <p class="badge bg-primary text-wrap" style="width: 11rem;">Ваш продукт</p>
+              {% endif %}
               {% if perms.catalog.can_unpublish_product %}
+              <table><tr>
                 {% if product.is_published %}
-                  <p class="text-success">Опубликовано</p>
+                  <td><p class="badge bg-success text-wrap" style="width: 15rem;">Опубликовано</p></td>
                 {% else %}
-                  <p class="text-danger">Не опубликовано</p>
+                  <td><p class="badge bg-warning text-wrap" style="width: 15rem;">Не опубликовано</p></td>
                 {% endif %}
+                  <td><p> {% if product.owner %}
+                        (Владелец: {{ product.owner.email }})
+                      {% endif %} </p></td>
+              </tr></table>
               {% endif %}
           </h3>
           <div class="mb-1 text-body-secondary">{{ product.price }}</div>

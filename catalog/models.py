@@ -1,5 +1,8 @@
 from django.db import models
 
+from users.models import UserModel
+
+
 # В приложении каталога создайте модели Product и Category и опишите для них базовые настройки.
 #
 # Описание моделей:
@@ -77,6 +80,15 @@ class Product(models.Model):
     )
     is_published = models.BooleanField(
         default=False, verbose_name="Признак публикации", help_text="Опубликовано?"
+    )
+    owner = models.ForeignKey(
+        UserModel,
+        on_delete=models.CASCADE,
+        related_name="products",
+        verbose_name="Владелец",
+        help_text="Укажите владельца продукта",
+        blank=False,
+        null=True,
     )
 
     def __str__(self):
