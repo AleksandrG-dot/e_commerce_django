@@ -4,6 +4,8 @@ from django.contrib.auth.mixins import (
 )
 from django.http import HttpResponse
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django.views.generic import (
     ListView,
     DetailView,
@@ -28,6 +30,7 @@ class ProductListView(ListView):
             return Product.objects.filter(is_published=True)
 
 
+@method_decorator(cache_page(900), name="dispatch")
 class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Product
     context_object_name = "product"
