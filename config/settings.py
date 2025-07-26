@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from django.conf.global_settings import STATICFILES_DIRS, MEDIA_URL, MEDIA_ROOT, AUTH_USER_MODEL, LOGIN_REDIRECT_URL, \
-    LOGOUT_REDIRECT_URL
+    LOGOUT_REDIRECT_URL, CACHES
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -166,7 +166,6 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 # Настройки почты
-# !!!!! Не стал выносить настройки почты в .env для удобства проверки работоспособности отправки писем
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.mail.ru'
 EMAIL_PORT = 2525
@@ -180,4 +179,12 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Перенаправление неавторизованных пользователей на...
 LOGIN_URL = reverse_lazy('users:login')
+
+# Используем Redis в качестве кеша и задаем его параметры
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+    }
+}
 
