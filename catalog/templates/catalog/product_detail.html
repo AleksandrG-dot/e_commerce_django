@@ -10,8 +10,12 @@
 <h3>Категория: {{ product.category }}</h3>
 <h3>{{ product.name }}</h3>
 <p>
+    {% if perms.catalog.can_unpublish_product or product.owner == user %}
     <a href="{% url 'catalog:product_update' product.pk %}" class="icon-link icon-link-hover me-3">Изменить</a>
-    <a href="{% url 'catalog:product_delete' product.pk %}" class="icon-link icon-link-hover me-3">Удалить</a>
+    {% endif %}
+    {% if perms.catalog.delete_product or product.owner == user %}
+      <a href="{% url 'catalog:product_delete' product.pk %}" class="icon-link icon-link-hover me-3">Удалить</a>
+    {% endif %}
     <h5><figure class="text-end">Цена: {{ product.price }}</figure></h5>
 </p>
 <div class="row">
