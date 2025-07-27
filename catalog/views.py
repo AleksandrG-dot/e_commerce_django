@@ -2,8 +2,7 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     UserPassesTestMixin,
 )
-from django.contrib.auth.tokens import default_token_generator
-from django.db.models.expressions import result
+from django.core.cache import cache
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -69,11 +68,19 @@ class ProductListView(ListView):
     model = Product
 
     def get_queryset(self):
-        """Если нет прав на изменение is_published, то отображаем только разрешенные для публикации страницы"""
+        """Если нет прав на изменение is_published, то отображаем только разрешенные для публикации страницы.
+        Есть кеширование"""
+        key_pub = 'product_is_published' # ключ кеширования для опубликованных продуктов
         if self.request.user.has_perm("catalog.can_unpublish_product"):
             return super().get_queryset().order_by("is_published")
         else:
-            return Product.objects.filter(is_published=True)
+            # Кеширую только запросы для пользователей без прав публикации.
+            # Если кешировать для тех у кого есть права, они могут видеть не верную инфу и это критично
+            queryset = cache.get(key_pub)
+            if not queryset:
+                queryset = Product.objects.filter(is_published=True)
+                cache.set(key_pub, queryset, 900)
+            return queryset
 
 
 @method_decorator(cache_page(900), name="dispatch")
