@@ -2,7 +2,10 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     UserPassesTestMixin,
 )
+from django.contrib.auth.tokens import default_token_generator
+from django.db.models.expressions import result
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -13,10 +16,53 @@ from django.views.generic import (
     CreateView,
     UpdateView,
     DeleteView,
+    TemplateView,
 )
 
+from .services import ProductService
+
 from catalog.forms import ContactForm, ProductForm, ProductModeratorForm
-from catalog.models import Product
+from catalog.models import Product, Category
+
+
+class ProductByCategoryList(TemplateView):
+    model = Category
+    template_name = r"catalog\prod_by_category_list.html"
+    context_object_name = "categories"
+
+    def get_context_data(self, **kwargs):
+        """Передает данные для формы"""
+        context = super().get_context_data(**kwargs)
+
+        # Заносим в контекст набор существующих категорий т.к. TeplateView этого не делает
+        context[self.context_object_name] = Category.objects.all()
+
+        # Заносим в контекст id выбранной категории (для его выбора в выпадающем меню)
+        context["selected_category"] = self.kwargs.get("pk", None)
+
+        # Забираем продукты из требуемой категории с использованием сервисной функции,
+        # которая на вход принимает требуемую категорию. ID категории забираем из pk от URl-запроса
+        products = ProductService.get_products_by_category(
+            Category(id=self.kwargs["pk"])
+        )
+
+        # Если у пользователя нет права изменять публикацию продукта (can_unpublish_product),
+        # то фильтруем результат на отсутствие не публикуемых товаров
+        if not self.request.user.has_perm("catalog.can_unpublish_product"):
+            products = [prod for prod in products if prod.is_published]
+
+        # Заносим в контекст список продуктов
+        context["products"] = products
+        return context
+
+    def post(self, request, *args, **kwargs):
+        """Метод post теперь перенаправляет на страницу продуктов по категории с выбранной пользователем категорией"""
+        pk = request.POST.get("cetegory_select")
+        if not pk.isdigit():
+            pk = "0"
+        return redirect(
+            reverse_lazy("catalog:product_by_category", kwargs={"pk": int(pk)})
+        )
 
 
 class ProductListView(ListView):
@@ -100,7 +146,7 @@ class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 class ContactsView(FormView):
-    template_name = "catalog/contacts.html"
+    template_name = r"catalog\contacts.html"
     form_class = ContactForm
     success_url = reverse_lazy("catalog:contacts")
 
