@@ -1,0 +1,55 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}Категории товаров{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+  <h3>Выберите категорию</h3>
+  <select class="form-select" name="cetegory_select" aria-label="Выбор категории">
+    <option selected></option>
+    {% for category in categories %}
+      <option value={{ category.id }} {% if category.id == selected_category %}selected{% endif %}>{{ category }}</option>
+    {% endfor %}
+  </select>
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary mt-3 mb-5">Показать</button>
+</form>
+
+{% for product in products %}
+      <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <h3 class="mb-0">{{ product.name }}
+              {% if product.owner == user %}
+              <p class="badge bg-primary text-wrap" style="width: 11rem;">Ваш продукт</p>
+              {% endif %}
+              {% if perms.catalog.can_unpublish_product %}
+              <table><tr>
+                {% if product.is_published %}
+                  <td><p class="badge bg-success text-wrap" style="width: 15rem;">Опубликовано</p></td>
+                {% else %}
+                  <td><p class="badge bg-warning text-wrap" style="width: 15rem;">Не опубликовано</p></td>
+                {% endif %}
+                  <td><p> {% if product.owner %}
+                        (Владелец: {{ product.owner.email }})
+                      {% endif %} </p></td>
+              </tr></table>
+              {% endif %}
+          </h3>
+          <div class="mb-1 text-body-secondary">{{ product.price }}</div>
+          <p class="card-text mb-auto">{{ product.description|truncatechars:100 }}</p>
+          <a href="{% url 'catalog:product_detail' product.pk %}" class="icon-link gap-1 icon-link-hover stretched-link">
+            Подробнее
+            <svg class="bi"><use xlink:href="#chevron-right"></use></svg>
+          </a>
+        </div>
+        <div class="col-auto d-none d-lg-block">
+            {% if product.photo %}
+                <img src="{{ product.photo.url }}" width="250" alt="Фото не найдено">
+            {% else %}
+                Фото не найдено
+            {% endif %}
+        </div>
+      </div>
+
+{% endfor %}
+{% endblock %}
